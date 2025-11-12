@@ -1,0 +1,111 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User Model for authentication
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  password  String
+  name      String
+  role      String     @default("user") // user, admin
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@map("users")
+}
+
+// Customer/Debtor Model
+model Customer {
+  id            String     @id @default(cuid())
+  customerId    String     @unique // รหัสลูกค้า (e.g., R001, N002)
+  customerName  String     // ชื่อลูกหนี้/ลูกค้า
+  region        String     // เขตพื้นที่ (ใต้, เหนือ, อีสานบน, etc)
+  salesPerson   String     // พนักงานขาย
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  
+  invoices      Invoice[]
+  
+  @@map("customers")
+}
+
+// Invoice Model
+model Invoice {
+  id                String     @id @default(cuid())
+  customerId        String
+  customer          Customer   @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  
+  invoiceNumber     String     @unique // เลขที่ใบกำกับ
+  invoiceDate       DateTime   // วันที่
+  dueDate           DateTime   // วันที่ครบกำหนด (ครบกำหนด)
+  
+  totalAmount       Decimal    @db.Decimal(12, 2) // รวมเป็นเงิน (G)
+  paidAmount        Decimal    @db.Decimal(12, 2) @default(0) // ชำระเงินแล้ว (H)
+  outstandingAmount Decimal    @db.Decimal(12, 2) // ยอดคงเหลือสุทธิ (I)
+  
+  daysOverdue       Int        @default(0) // จำนวนวันค้างชำระ (calculated)
+  agingBucket       String     @default("current") // current, 1-45, 46-90, over90
+  
+  status            String     @default("open") // open, partial, paid
+  
+  uploadId          String?
+  upload            Upload?    @relation(fields: [uploadId], references: [id], onDelete: SetNull)
+  
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  
+  @@index([customerId])
+  @@index([dueDate])
+  @@index([agingBucket])
+  @@map("invoices")
+}
+
+// Upload/Report Model
+model Upload {
+  id                String     @id @default(cuid())
+  fileName          String
+  originalFileName  String
+  fileSize          Int
+  
+  uploadedBy        String     // User ID who uploaded
+  uploadedAt        DateTime   @default(now())
+  
+  invoiceCount      Int        @default(0)
+  processingStatus  String     @default("pending") // pending, processing, completed, failed
+  errorMessage      String?
+  
+  invoices          Invoice[]
+  
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  
+  @@map("uploads")
+}
+
+// Report Configuration Model
+model ReportConfig {
+  id                String     @id @default(cuid())
+  reportType        String     @unique // "all", "45days", "90days", "over90days"
+  displayName       String     // Display name in UI (Thai)
+  description       String?
+  dayLimit          Int?       // 45 or 90
+  dayLimitCondition String?    // '<=' or '>'
+  isActive          Boolean    @default(true)
+  
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  
+  @@map("report_configs")
+}
