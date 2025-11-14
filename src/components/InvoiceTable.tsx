@@ -3,13 +3,13 @@
 import { getRegionName } from '@/utils/regionMapping';
 
 interface Invoice {
+  invoiceDate: string;
   id: string;
   invoiceNumber: string;
   customerId: string;
   customerName: string;
   region: string;
   salesPerson: string;
-  invoiceDate: string;
   dueDate: string;
   outstandingAmount: number;
   daysOverdue: number;
@@ -34,12 +34,12 @@ export default function InvoiceTable({
       <table className="w-full border-collapse border border-gray-300">
         <thead className="bg-gray-100">
           <tr>
+            <th className="border border-gray-300 px-4 py-2 text-center">วันที่เอกสาร</th>
             <th className="border border-gray-300 px-4 py-2 text-left">Invoice Number</th>
             <th className="border border-gray-300 px-4 py-2 text-left">Customer ID</th>
             <th className="border border-gray-300 px-4 py-2 text-left">Customer Name</th>
             <th className="border border-gray-300 px-4 py-2 text-left">Sales Person</th>
             <th className="border border-gray-300 px-4 py-2 text-left">Region</th>
-            <th className="border border-gray-300 px-4 py-2 text-center">วันที่เอกสาร</th>
             <th className="border border-gray-300 px-4 py-2 text-center">วันครบกำหนด</th>
             <th className="border border-gray-300 px-4 py-2 text-right">Outstanding Amount</th>
             <th className="border border-gray-300 px-4 py-2 text-center">Days Overdue</th>
