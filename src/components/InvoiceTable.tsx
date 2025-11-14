@@ -3,13 +3,13 @@
 import { getRegionName } from '@/utils/regionMapping';
 
 interface Invoice {
-  invoiceDate: string;
   id: string;
   invoiceNumber: string;
   customerId: string;
   customerName: string;
   region: string;
   salesPerson: string;
+  invoiceDate: string;
   dueDate: string;
   outstandingAmount: number;
   daysOverdue: number;
@@ -49,24 +49,24 @@ export default function InvoiceTable({
         <tbody>
           {invoices.map((inv) => (
             <tr key={inv.id} className="hover:bg-gray-50">
+              <td className="border border-gray-300 px-4 py-2 text-center">
+                {inv.invoiceDate ? new Date(inv.invoiceDate).toLocaleDateString('th-TH', {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric',
+                }) : '-'}
+              </td>
               <td className="border border-gray-300 px-4 py-2">{inv.invoiceNumber}</td>
               <td className="border border-gray-300 px-4 py-2">{inv.customerId}</td>
               <td className="border border-gray-300 px-4 py-2">{inv.customerName}</td>
               <td className="border border-gray-300 px-4 py-2">{inv.salesPerson}</td>
               <td className="border border-gray-300 px-4 py-2">{getRegionName(inv.region)}</td>
               <td className="border border-gray-300 px-4 py-2 text-center">
-                {new Date(inv.invoiceDate).toLocaleDateString('th-TH', {
+                {inv.dueDate ? new Date(inv.dueDate).toLocaleDateString('th-TH', {
                   year: 'numeric',
                   month: 'short',
                   day: 'numeric',
-                })}
-              </td>
-              <td className="border border-gray-300 px-4 py-2 text-center">
-                {new Date(inv.dueDate).toLocaleDateString('th-TH', {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric',
-                })}
+                }) : '-'}
               </td>
               <td className="border border-gray-300 px-4 py-2 text-right">
                 ฿{inv.outstandingAmount.toLocaleString('th-TH', {
