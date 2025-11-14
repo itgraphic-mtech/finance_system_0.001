@@ -105,6 +105,7 @@ export async function GET(req: NextRequest) {
       customerName: inv.customer?.customerName || inv.customerName || "",
       region: inv.customer?.region || "",
       salesPerson: inv.customer?.salesPerson || "",
+      invoiceDate: inv.invoiceDate,
       dueDate: inv.dueDate,
       totalAmount: inv.totalAmount,
       paidAmount: inv.paidAmount,

@@ -13,6 +13,7 @@ interface Invoice {
   customerId: string;
   region: string;
   salesPerson: string;
+  invoiceDate: string;
   dueDate: string;
   totalAmount: number;
   paidAmount: number;

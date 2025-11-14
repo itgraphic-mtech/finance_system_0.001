@@ -9,6 +9,7 @@ interface Invoice {
   customerName: string;
   region: string;
   salesPerson: string;
+  invoiceDate: string;
   dueDate: string;
   outstandingAmount: number;
   daysOverdue: number;
@@ -38,6 +39,8 @@ export default function InvoiceTable({
             <th className="border border-gray-300 px-4 py-2 text-left">Customer Name</th>
             <th className="border border-gray-300 px-4 py-2 text-left">Sales Person</th>
             <th className="border border-gray-300 px-4 py-2 text-left">Region</th>
+            <th className="border border-gray-300 px-4 py-2 text-center">วันที่เอกสาร</th>
+            <th className="border border-gray-300 px-4 py-2 text-center">วันครบกำหนด</th>
             <th className="border border-gray-300 px-4 py-2 text-right">Outstanding Amount</th>
             <th className="border border-gray-300 px-4 py-2 text-center">Days Overdue</th>
             <th className="border border-gray-300 px-4 py-2 text-center">Aging Bucket</th>
@@ -51,6 +54,20 @@ export default function InvoiceTable({
               <td className="border border-gray-300 px-4 py-2">{inv.customerName}</td>
               <td className="border border-gray-300 px-4 py-2">{inv.salesPerson}</td>
               <td className="border border-gray-300 px-4 py-2">{getRegionName(inv.region)}</td>
+              <td className="border border-gray-300 px-4 py-2 text-center">
+                {new Date(inv.invoiceDate).toLocaleDateString('th-TH', {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric',
+                })}
+              </td>
+              <td className="border border-gray-300 px-4 py-2 text-center">
+                {new Date(inv.dueDate).toLocaleDateString('th-TH', {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric',
+                })}
+              </td>
               <td className="border border-gray-300 px-4 py-2 text-right">
                 ฿{inv.outstandingAmount.toLocaleString('th-TH', {
                   minimumFractionDigits: 2,
